@@ -1,0 +1,9 @@
+{
+    "font awesome 5 brands": {
+        "normal": "font_awesome_5_brands_normal_bf1dafe91da1b51a77960ecc76aeaf86"
+    },
+    "font awesome 5 free": {
+        "normal": "C:\\xampp\\htdocs\\atk_humas_full\\vendor\\dompdf\\dompdf\/lib\/fonts\/font_awesome_5_free_normal_88ea9a0638ee1a33ca889363ecc1fc21",
+        "900": "font_awesome_5_free_900_d71dbce71023a6371594f58656af5d29"
+    }
+}
