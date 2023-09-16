@@ -13,12 +13,30 @@
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
 
+    <?php
+    if (session()->get('role') == 'admin') {
+    ?>
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
         <a class="nav-link" href=".">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
+    <?php
+    }
+    ?>
+    <?php
+    if (session()->get('role') == 'user') {
+    ?>
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active">
+        <a class="nav-link" href="Homeuser">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard User</span></a>
+    </li>
+    <?php
+    }
+    ?>
 
     <!-- Divider -->
     <hr class="sidebar-divider">
@@ -49,12 +67,31 @@
     }
     ?>
 
+    <?php
+    if (session()->get('role') == 'admin') {
+    ?>
     <!-- Nav Item - Tables -->
     <li class="nav-item active">
         <a class="nav-link" href="barang">
             <i class="fas fa-fw fa-table"></i>
+            <span>ATK Humas Admin</span></a>
+    </li>
+    <?php
+    }
+    ?>
+
+    <?php
+    if (session()->get('role') == 'user') {
+    ?>
+    <!-- Nav Item - Tables -->
+    <li class="nav-item active">
+        <a class="nav-link" href="baranguser">
+            <i class="fas fa-fw fa-table"></i>
             <span>ATK Humas</span></a>
     </li>
+    <?php
+    }
+    ?>
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

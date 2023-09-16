@@ -5,28 +5,32 @@ namespace App\Controllers;
 use App\Models\BarangModel;
 use App\Models\DetailModel;
 
-class BarangController extends BaseController
+class BarangUserController extends BaseController
 {
-    protected $barang;
+    protected $baranguser;
     protected $detail;
     protected $validation;
 
+
     function __construct()
     {
-        helper('number');
         helper('form');
+        helper('number');
         $this->validation = \Config\Services::validation();
-        $this->barang = new BarangModel();
+        $this->baranguser = new BarangModel();
         $this->detail = new DetailModel();
     }
 
     public function index()
     {
-        $data['barangs'] = $this->barang->findAll();
         $data['details'] = $this->detail->findAll();
-        return view('/barang_view', $data);
-    }
+        $username = session()->get('username'); // Mengambil username dari session
+        
+        // Mengambil status pemesanan hanya untuk akun yang sedang login
+        $data['barangusers'] = $this->baranguser->where('username', $username)->findAll();
 
+        return view('baranguser_view', $data);
+    }
     public function create()
     {
         $data = $this->request->getPost();
@@ -60,10 +64,10 @@ class BarangController extends BaseController
                 ];
 
                 // Masukkan data ke tabel 'atk'
-                $this->barang->insert($dataForm);
+                $this->baranguser->insert($dataForm);
 
                 // Setelah data dimasukkan ke 'atk', kita akan membuat relasi dengan tabel 'detail'
-                $lastInsertedId = $this->barang->getInsertID(); // Dapatkan ID dari data yang baru saja dimasukkan
+                $lastInsertedId = $this->baranguser->getInsertID(); // Dapatkan ID dari data yang baru saja dimasukkan
 
                 // Buat relasi dengan tabel 'detail'
                 $detailModel = new \App\Models\DetailModel();
@@ -74,19 +78,16 @@ class BarangController extends BaseController
                 ];
                 $detailModel->insert($detailData);
 
-                return redirect()->to('barang')->with('success', 'Data Berhasil Ditambah.');
+                return redirect()->to('baranguser')->with('success', 'Data Berhasil Ditambah.');
             } else {
                 return redirect()->back()->with('error', 'Pengguna tidak ditemukan.');
             }
         } else {
             $data['errors'] = $this->validation->getErrors();
-            $data['barangs'] = $this->barang->findAll();
-            return view('/barang_view', $data);
+            $data['barangusers'] = $this->baranguser->findAll();
+            return view('/baranguser_view', $data);
         }
     }
-
-
-
 
     public function edit($id)
     {
@@ -105,34 +106,36 @@ class BarangController extends BaseController
                 'jumlah' => $this->request->getPost('jumlah'),
                 'keterangan' => $this->request->getPost('keterangan'),
                 'tanggal' => $this->request->getPost('tanggal'),
-                'status' => $this->request->getPost('status'),
+                'status' => false,
             ];
 
-            $this->barang->update($id, $dataForm);
+            $this->baranguser->update($id, $dataForm);
 
-            return redirect('barang')->with('success', 'Data Berhasil Diubah');
+            return redirect('baranguser')->with('success', 'Data Berhasil Diubah');
         } else {
             $data['errors'] = $this->validation->getErrors();
-            $data['barangs'] = $this->barang->findAll();
-            return view('/barang_view', $data);
+            $data['barangusers'] = $this->baranguser->findAll();
+            return view('/baranguser_view', $data);
         }
     }
 
     public function delete($id)
     {
         // Temukan data barang berdasarkan ID
-        $barang = $this->barang->find($id);
+        $baranguser = $this->baranguser->find($id);
 
-        if (!$barang) {
-            return redirect('barang')->with('error', 'Data Barang tidak ditemukan.');
+        if (!$baranguser) {
+            return redirect('baranguser')->with('error', 'Data Barang tidak ditemukan.');
         }
 
         // Hapus entri detail yang sesuai dengan id_atk yang sesuai
-        $this->detail->where('id_atk', $barang['id'])->delete();
+        $this->detail->where('id_atk', $baranguser['id'])->delete();
 
         // Hapus data barang dari tabel 'atk'
-        $this->barang->delete($id);
+        $this->baranguser->delete($id);
 
-        return redirect('barang')->with('success', 'Data Berhasil Dihapus');
+        return redirect('baranguser')->with('success', 'Data Berhasil Dihapus');
     }
+
+
 }

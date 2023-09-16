@@ -19,9 +19,9 @@ class AuthController extends BaseController
         if ($this->request->getPost()) {
             $username = $this->request->getVar('username');
             $password = md5($this->request->getVar('password'));
-    
+
             $dataUser = $this->user->where('username', $username)->first();
-    
+
             if ($dataUser) {
                 if ($password === $dataUser['password']) {
                     if ($dataUser['is_aktif'] == 1) {
@@ -32,7 +32,12 @@ class AuthController extends BaseController
                             'isLoggedIn' => false
                         ]);
                         session()->setFlashdata('success', 'Anda Berhasil Login.');
-                        return redirect()->to(base_url('/'));
+                        // Cek peran pengguna dan arahkan sesuai ke halaman yang sesuai
+                        if ($dataUser['role'] == 'admin') {
+                            return redirect()->to(base_url('/'));
+                        } elseif ($dataUser['role'] == 'user') {
+                            return redirect()->to(base_url('Homeuser')); // Ubah sesuai dengan URL Homeuser Anda
+                        }
                     } else {
                         if ($dataUser['is_aktif'] == 0) {
                             session()->setFlashdata('failed', 'Akun Anda tidak aktif. Silakan hubungi administrator 08220490991.');
@@ -42,11 +47,11 @@ class AuthController extends BaseController
                         return redirect()->back();
                     }
                 } else {
-                    session()->setFlashdata('failed', 'Username atau Password Salah');
+                    session()->setFlashdata('failed', 'Password Salah, atau belum di isi');
                     return redirect()->back();
                 }
             } else {
-                session()->setFlashdata('failed', 'Username atau Password Salah');
+                session()->setFlashdata('failed', 'Username atau Password Salah, atau belum di isi');
                 return redirect()->back();
             }
         } else {
@@ -72,7 +77,7 @@ class AuthController extends BaseController
             ];
 
             if (!$this->validate($rules, $messages)) {
-                session()->setFlashdata('failed', 'Registrasi gagal. Password harus memiliki 6 karakter tidak boleh lebih dan tidak boleh kurang, atau terjadi kesalahan email tidak valid');
+                session()->setFlashdata('failed', 'Registrasi gagal. Password harus memiliki 6 karakter tidak boleh lebih dan tidak boleh kurang, atau terjadi kesalahan email tidak valid, atau ada data yang belum di isi');
                 return redirect()->back()->withInput();
             }
 
@@ -107,7 +112,7 @@ class AuthController extends BaseController
         } else {
             return view('register_view');
         }
-    }    
+    }
 
     public function logout()
     {

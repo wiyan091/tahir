@@ -50,6 +50,15 @@
     <div class="card shadow mb-4">
 
         <div class="card-header py-3">
+            <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+                +
+            </button> -->
+            <a href="#" class="btn btn-primary btn-icon-split" data-bs-toggle="modal" data-bs-target="#createModal">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="text">Tambah ATK</span>
+            </a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -72,27 +81,27 @@
                         </tr>
                     </thead>
                     <tbody id="tableData">
-                        <?php foreach ($barangs as $index => $barang) : ?>
+                        <?php foreach ($barangusers as $index => $baranguser) : ?>
                             <tr>
                                 <th scope="row"><?php echo $index + 1 ?></th>
-                                <td><?php echo $barang['nama'] ?></td>
-                                <td><?php echo $barang['jumlah'] ?></td>
-                                <td><?php echo $barang['keterangan'] ?></td>
-                                <td><?php echo $barang['tanggal'] ?></td>
+                                <td><?php echo $baranguser['nama'] ?></td>
+                                <td><?php echo $baranguser['jumlah'] ?></td>
+                                <td><?php echo $baranguser['keterangan'] ?></td>
+                                <td><?php echo $baranguser['tanggal'] ?></td>
 
                                 <td class="<?php
-                                            if ($barang['status'] == 0) {
+                                            if ($baranguser['status'] == 0) {
                                                 echo "status-menunggu";
-                                            } elseif ($barang['status'] == 1) {
+                                            } elseif ($baranguser['status'] == 1) {
                                                 echo "status-selesai";
                                             } else {
                                                 echo "status-tidak-valid";
                                             }
                                             ?>">
                                     <?php
-                                    if ($barang['status'] == 0) {
+                                    if ($baranguser['status'] == 0) {
                                         echo "Menunggu";
-                                    } elseif ($barang['status'] == 1) {
+                                    } elseif ($baranguser['status'] == 1) {
                                         echo "Selesai";
                                     } else {
                                         echo "Status tidak valid";
@@ -100,11 +109,11 @@
                                     ?>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal-<?= $barang['id'] ?>">
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal-<?= $baranguser['id'] ?>">
                                         Ubah
                                     </button>
 
-                                    <a href="<?= base_url('barang/delete/' . $barang['id']) ?>" class="btn btn-danger btn-icon-split" onclick="return confirm('Yakin hapus data ini ?')">
+                                    <a href="<?= base_url('baranguser/delete/' . $baranguser['id']) ?>" class="btn btn-danger btn-icon-split" onclick="return confirm('Yakin hapus data ini ?')">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-trash"></i>
                                         </span>
@@ -115,41 +124,33 @@
                                 </td>
                             </tr>
                             <!-- Edit Modal Begin -->
-                            <div class="modal fade" id="editModal-<?= $barang['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel-<?= $barang['id'] ?>">
+                            <div class="modal fade" id="editModal-<?= $baranguser['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel-<?= $baranguser['id'] ?>">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editModalLabel-<?= $barang['id'] ?>">Ubah ATK</h5>
+                                            <h5 class="modal-title" id="editModalLabel-<?= $baranguser['id'] ?>">Ubah ATK</h5>
                                             <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">×</span>
                                             </button>
                                         </div>
-                                        <form action="<?= base_url('barang/edit/' . $barang['id']) ?>" method="post" enctype="multipart/form-data">
+                                        <form action="<?= base_url('baranguser/edit/' . $baranguser['id']) ?>" method="post" enctype="multipart/form-data">
                                             <?= csrf_field(); ?>
                                             <div class="modal-body">
                                                 <div class="form-group">
                                                     <label for="nama">Nama</label>
-                                                    <input type="text" name="nama" class="form-control" id="nama" value="<?= $barang['nama'] ?>" placeholder="Nama Barang" readonly>
+                                                    <input type="text" name="nama" class="form-control" id="nama" value="<?= $baranguser['nama'] ?>" placeholder="Nama Barang" required>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="jumlah">Jumlah</label>
-                                                    <input type="text" name="jumlah" class="form-control" id="jumlah" value="<?= $barang['jumlah'] ?>" placeholder="Jumlah Barang" readonly>
+                                                    <input type="text" name="jumlah" class="form-control" id="jumlah" value="<?= $baranguser['jumlah'] ?>" placeholder="Jumlah Barang" required>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="keterangan">Keterangan</label>
-                                                    <input type="text" name="keterangan" class="form-control" id="keterangan" value="<?= $barang['keterangan'] ?>" placeholder="Keterangan" readonly>
+                                                    <input type="text" name="keterangan" class="form-control" id="keterangan" value="<?= $baranguser['keterangan'] ?>" placeholder="Keterangan" required>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="tanggal">Tanggal</label>
-                                                    <input type="date" name="tanggal" class="form-control" value="<?= $barang['tanggal'] ?>" readonly>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="status">Status</label>
-                                                    <select name="status" class="form-control" required>
-                                                        <option value="1" <?= $barang['status'] == '1' ? 'selected' : '' ?>>Selesai</option>
-                                                        <option value="0" <?= $barang['status'] == '0' ? 'selected' : '' ?>>Menunggu</option>
-
-                                                    </select>
+                                                    <input type="date" name="tanggal" class="form-control" value="<?= $baranguser['tanggal'] ?>" required>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -188,7 +189,7 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <form action="<?= base_url('barang') ?>" method="post" enctype="multipart/form-data">
+            <form action="<?= base_url('baranguser') ?>" method="post" enctype="multipart/form-data">
                 <?= csrf_field(); ?>
                 <div class="modal-body">
                     <div class="form-group">

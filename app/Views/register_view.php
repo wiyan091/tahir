@@ -75,7 +75,7 @@ $password = [
 
                         <div class="pt-4 pb-2">
                             <h5 class="card-title text-center pb-0 fs-4">Create Account</h5>
-                            <p class="text-center small">Enter your Username, Email & password to sig up</p>
+                            <p class="text-center small">Enter your Username, Email & password to SignUp</p>
                         </div>
 
                         <?php

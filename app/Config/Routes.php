@@ -31,6 +31,7 @@ $routes->set404Override();
 // route since we don't have to scan directories.
 
 $routes->get('/', 'Home::index', ['filter' => 'auth']);
+$routes->get('/Homeuser', 'HomeUser::index', ['filter' => 'auth']);
 
 $routes->get('/login', 'AuthController::login');
 $routes->add('/login', 'AuthController::login'); 
@@ -45,11 +46,17 @@ $routes->add('/barang', 'BarangController::create', ['filter' => 'auth']);
 $routes->post('barang/edit/(:any)', 'BarangController::edit/$1', ['filter' => 'auth']);
 $routes->get('/barang/delete/(:any)', 'BarangController::delete/$1', ['filter' => 'auth']);
 
+$routes->get('/baranguser', 'BarangUserController::index', ['filter' => 'auth']);
+$routes->add('/baranguser', 'BarangUserController::create', ['filter' => 'auth']);
+$routes->post('baranguser/edit/(:any)', 'BarangUserController::edit/$1', ['filter' => 'auth']);
+$routes->get('/baranguser/delete/(:any)', 'BarangUserController::delete/$1', ['filter' => 'auth']);
+
 $routes->get('/manajemenuser', 'ManajemenUserController::index', ['filter' => 'auth']);
 $routes->add('/manajemenuser/edit/(:any)', 'ManajemenUserController::edit/$1', ['filter' => 'auth']);
 $routes->get('/manajemenuser/delete/(:any)', 'ManajemenUserController::delete/$1', ['filter' => 'auth']);
 
 $routes->get('/generate-pdf', 'Home::generatePdf', ['filter' => 'auth']);
+$routes->get('/generateuser-pdf', 'HomeUser::generateuserPdf', ['filter' => 'auth']);
 
 
 /*

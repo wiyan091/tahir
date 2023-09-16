@@ -43,5 +43,6 @@ class Home extends BaseController
 
         // Output the generated PDF
         $dompdf->stream('ATK_Humas.pdf', ['Attachment' => false]);
+        exit();
     }
 }

@@ -10,7 +10,7 @@
     {
         public function before(RequestInterface $request, $arguments = null)
         {
-            // Do something here
+            // memastikan apa sudah login atau belum kalau belum akan di arahkan ke menu login (/index.php/login)
             if (!session()->has('isLoggedIn')) {
                 return redirect()->to(site_url('login'));
             }
