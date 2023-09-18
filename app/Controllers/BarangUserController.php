@@ -25,7 +25,7 @@ class BarangUserController extends BaseController
     {
         $data['details'] = $this->detail->findAll();
         $username = session()->get('username'); // Mengambil username dari session
-        
+
         // Mengambil status pemesanan hanya untuk akun yang sedang login
         $data['barangusers'] = $this->baranguser->where('username', $username)->findAll();
 
@@ -40,7 +40,24 @@ class BarangUserController extends BaseController
             'keterangan' => 'required',
             'tanggal' => 'required'
         ];
-        $validate = $this->validation->setRules($rules)->run($data);
+        // Set pesan kesalahan untuk setiap aturan
+        $messages = [
+            'nama' => [
+                'required' => 'Nama harus diisi.'
+            ],
+            'jumlah' => [
+                'required' => 'Jumlah harus diisi.',
+                'integer' => 'Jumlah harus berupa angka.'
+            ],
+            'keterangan' => [
+                'required' => 'Keterangan harus diisi.'
+            ],
+            'tanggal' => [
+                'required' => 'Tanggal harus diisi.'
+            ]
+        ];
+
+        $validate = $this->validation->setRules($rules, $messages)->run($data);
 
         if ($validate) {
             $userModel = new \App\Models\UserModel();
@@ -80,11 +97,29 @@ class BarangUserController extends BaseController
 
                 return redirect()->to('baranguser')->with('success', 'Data Berhasil Ditambah.');
             } else {
-                return redirect()->back()->with('error', 'Pengguna tidak ditemukan.');
+                return redirect('baranguser')->with('failed', 'Gagal Ditambah.');
             }
         } else {
-            $data['errors'] = $this->validation->getErrors();
-            $data['barangusers'] = $this->baranguser->findAll();
+
+            // Jika validasi gagal, ambil pesan kesalahan
+            $validationErrors = $this->validation->getErrors();
+
+            // Kirim pesan kesalahan ke tampilan
+            return redirect('baranguser')->with('validationErrors', $validationErrors);
+
+            // Mengambil barang sesuai dengan session pengguna yang sedang masuk
+            $loggedInUsername = session()->get('username');
+            $userModel = new \App\Models\UserModel();
+            $user = $userModel->where('username', $loggedInUsername)->first();
+
+            if ($user) {
+                // Mengambil barang sesuai dengan ID pengguna yang sedang masuk
+                $id_user = $user['id'];
+                $data['barangusers'] = $this->baranguser->where('id_user', $id_user)->findAll();
+            } else {
+                $data['barangusers'] = []; // Jika pengguna tidak ditemukan, beri tahu bahwa tidak ada barang yang tersedia.
+            }
+
             return view('/baranguser_view', $data);
         }
     }
@@ -98,7 +133,24 @@ class BarangUserController extends BaseController
             'keterangan' => 'required',
             'tanggal' => 'required'
         ];
-        $validate = $this->validation->setRules($rules)->run($data);
+        // Set pesan kesalahan untuk setiap aturan
+        $messages = [
+            'nama' => [
+                'required' => 'Nama harus diisi.'
+            ],
+            'jumlah' => [
+                'required' => 'Jumlah harus diisi.',
+                'integer' => 'Jumlah harus berupa angka.'
+            ],
+            'keterangan' => [
+                'required' => 'Keterangan harus diisi.'
+            ],
+            'tanggal' => [
+                'required' => 'Tanggal harus diisi.'
+            ]
+        ];
+
+        $validate = $this->validation->setRules($rules, $messages)->run($data);
 
         if ($validate) {
             $dataForm = [
@@ -113,8 +165,25 @@ class BarangUserController extends BaseController
 
             return redirect('baranguser')->with('success', 'Data Berhasil Diubah');
         } else {
-            $data['errors'] = $this->validation->getErrors();
-            $data['barangusers'] = $this->baranguser->findAll();
+            // Jika validasi gagal, ambil pesan kesalahan
+            $validationErrors = $this->validation->getErrors();
+
+            // Kirim pesan kesalahan ke tampilan
+            return redirect('baranguser')->with('validationErrors', $validationErrors);
+
+            // Mengambil barang sesuai dengan session pengguna yang sedang masuk
+            $loggedInUsername = session()->get('username');
+            $userModel = new \App\Models\UserModel();
+            $user = $userModel->where('username', $loggedInUsername)->first();
+
+            if ($user) {
+                // Mengambil barang sesuai dengan ID pengguna yang sedang masuk
+                $id_user = $user['id'];
+                $data['barangusers'] = $this->baranguser->where('id_user', $id_user)->findAll();
+            } else {
+                $data['barangusers'] = []; // Jika pengguna tidak ditemukan, beri tahu bahwa tidak ada barang yang tersedia.
+            }
+
             return view('/baranguser_view', $data);
         }
     }
@@ -136,6 +205,4 @@ class BarangUserController extends BaseController
 
         return redirect('baranguser')->with('success', 'Data Berhasil Dihapus');
     }
-
-
 }

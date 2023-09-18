@@ -60,59 +60,89 @@ class AuthController extends BaseController
     }
 
     public function register()
-    {
-        if ($this->request->getMethod() === 'post') {
-            $rules = [
-                'username' => 'required',
-                'email' => 'required|valid_email',
-                'password' => 'required|exact_length[6]'
-            ];
+{
+    if ($this->request->getMethod() === 'post') {
+        // Verifikasi reCAPTCHA
+        $recaptchaSecretKey = config('Recaptcha')->secretKey;
+        $recaptchaResponse = $this->request->getPost('g-recaptcha-response');
 
-            $messages = [
-                'username.required' => 'Username harus diisi.',
-                'email.required' => 'Email harus diisi.',
-                'email.valid_email' => 'Format email tidak valid.',
-                'password.required' => 'Password harus diisi.',
-                'password.min_length' => 'Password harus memiliki 6 karakter.'
-            ];
+        $recaptchaUrl = 'https://www.google.com/recaptcha/api/siteverify';
+        $recaptchaData = [
+            'secret' => $recaptchaSecretKey,
+            'response' => $recaptchaResponse,
+        ];
 
-            if (!$this->validate($rules, $messages)) {
-                session()->setFlashdata('failed', 'Registrasi gagal. Password harus memiliki 6 karakter tidak boleh lebih dan tidak boleh kurang, atau terjadi kesalahan email tidak valid, atau ada data yang belum di isi');
-                return redirect()->back()->withInput();
-            }
+        // Kirim permintaan ke Google reCAPTCHA API
+        $ch = curl_init($recaptchaUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($recaptchaData));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-            $username = $this->request->getPost('username');
-            $email = md5($this->request->getPost('email'));
-            $password = md5($this->request->getPost('password'));
-            $role = 'user';
-            $is_aktif = 0;
+        $response = curl_exec($ch);
+        $responseData = json_decode($response);
 
-            // Validasi apakah username sudah ada dalam database
-            $existingUser = $this->user->where('username', $username)->first();
-            if ($existingUser) {
-                session()->setFlashdata('failed', 'Username sudah digunakan. Silakan pilih username lain.');
-                return redirect()->back();
-            }
-
-            // Buat data array untuk disimpan ke database
-            $data = [
-                'username' => $username,
-                'email' => $email,
-                'password' => $password,
-                'role' => $role,
-                'is_aktif' => $is_aktif,
-            ];
-
-            // Simpan data ke dalam database
-            $this->user->insert($data);
-
-            // Set session dan redirect ke halaman login setelah registrasi berhasil
-            session()->setFlashdata('success', 'Registrasi berhasil. Silakan login dengan akun yang sudah dibuat.');
-            return redirect()->to('login');
-        } else {
-            return view('register_view');
+        if (!$responseData->success) {
+            // Verifikasi reCAPTCHA gagal, tampilkan pesan kesalahan
+            session()->setFlashdata('failed', 'Verifikasi reCAPTCHA gagal. Silakan coba lagi.');
+            return redirect()->back()->withInput();
         }
+
+        curl_close($ch);
+
+        // Verifikasi reCAPTCHA berhasil, lanjutkan dengan validasi dan proses registrasi
+        $rules = [
+            'username' => 'required',
+            'email' => 'required|valid_email',
+            'password' => 'required|exact_length[6]'
+        ];
+
+        $messages = [
+            'username.required' => 'Username harus diisi.',
+            'email.required' => 'Email harus diisi.',
+            'email.valid_email' => 'Format email tidak valid.',
+            'password.required' => 'Password harus diisi.',
+            'password.exact_length' => 'Password harus memiliki 6 karakter.'
+        ];
+
+        if (!$this->validate($rules, $messages)) {
+            session()->setFlashdata('failed', 'Registrasi gagal. Lengkapi formulir dengan benar.');
+            return redirect()->back()->withInput();
+        }
+
+        $username = $this->request->getPost('username');
+        $email = md5($this->request->getPost('email'));
+        $password = md5($this->request->getPost('password'));
+        $role = 'user';
+        $is_aktif = 0;
+
+        // Validasi apakah username sudah ada dalam database
+        $existingUser = $this->user->where('username', $username)->first();
+        if ($existingUser) {
+            session()->setFlashdata('failed', 'Username sudah digunakan. Silakan pilih username lain.');
+            return redirect()->back()->withInput();
+        }
+
+        // Buat data array untuk disimpan ke database
+        $data = [
+            'username' => $username,
+            'email' => $email,
+            'password' => $password,
+            'role' => $role,
+            'is_aktif' => $is_aktif,
+        ];
+
+        // Simpan data ke dalam database
+        $this->user->insert($data);
+
+        // Set session dan redirect ke halaman login setelah registrasi berhasil
+        session()->setFlashdata('success', 'Registrasi berhasil. Silakan login dengan akun yang sudah dibuat.');
+        return redirect()->to('login');
+    } else {
+        return view('register_view');
     }
+}
+
+    
 
     public function logout()
     {

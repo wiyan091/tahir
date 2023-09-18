@@ -30,7 +30,7 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
-$routes->get('/', 'Home::index', ['filter' => 'auth']);
+$routes->get('/', 'Home::index', ['filter' => 'adminAccess']);
 $routes->get('/Homeuser', 'HomeUser::index', ['filter' => 'auth']);
 
 $routes->get('/login', 'AuthController::login');
@@ -41,19 +41,19 @@ $routes->add('/register', 'AuthController::register');
 
 
 
-$routes->get('/barang', 'BarangController::index', ['filter' => 'auth']);
-$routes->add('/barang', 'BarangController::create', ['filter' => 'auth']);
-$routes->post('barang/edit/(:any)', 'BarangController::edit/$1', ['filter' => 'auth']);
-$routes->get('/barang/delete/(:any)', 'BarangController::delete/$1', ['filter' => 'auth']);
+$routes->get('/barang', 'BarangController::index', ['filter' => 'adminAccess']);
+$routes->add('/barang', 'BarangController::create', ['filter' => 'adminAccess']);
+$routes->post('barang/edit/(:any)', 'BarangController::edit/$1', ['filter' => 'adminAccess']);
+$routes->get('/barang/delete/(:any)', 'BarangController::delete/$1', ['filter' => 'adminAccess']);
 
 $routes->get('/baranguser', 'BarangUserController::index', ['filter' => 'auth']);
 $routes->add('/baranguser', 'BarangUserController::create', ['filter' => 'auth']);
 $routes->post('baranguser/edit/(:any)', 'BarangUserController::edit/$1', ['filter' => 'auth']);
 $routes->get('/baranguser/delete/(:any)', 'BarangUserController::delete/$1', ['filter' => 'auth']);
 
-$routes->get('/manajemenuser', 'ManajemenUserController::index', ['filter' => 'auth']);
-$routes->add('/manajemenuser/edit/(:any)', 'ManajemenUserController::edit/$1', ['filter' => 'auth']);
-$routes->get('/manajemenuser/delete/(:any)', 'ManajemenUserController::delete/$1', ['filter' => 'auth']);
+$routes->get('/manajemenuser', 'ManajemenUserController::index', ['filter' => 'adminAccess']);
+$routes->add('/manajemenuser/edit/(:any)', 'ManajemenUserController::edit/$1', ['filter' => 'adminAccess']);
+$routes->get('/manajemenuser/delete/(:any)', 'ManajemenUserController::delete/$1', ['filter' => 'adminAccess']);
 
 $routes->get('/generate-pdf', 'Home::generatePdf', ['filter' => 'auth']);
 $routes->get('/generateuser-pdf', 'HomeUser::generateuserPdf', ['filter' => 'auth']);

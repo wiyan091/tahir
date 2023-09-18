@@ -34,7 +34,7 @@ $password = [
         align-items: center;
         font-size: 1.25rem;
         font-weight: bold;
-        color: #f00; 
+        color: #f00;
         background-color: #fff;
         border-radius: 50%;
         opacity: 0.5;
@@ -44,8 +44,8 @@ $password = [
     }
 
     .btn-close:hover {
-        color: #fff; 
-        background-color: #f00; 
+        color: #fff;
+        background-color: #f00;
         opacity: 1;
     }
 </style>
@@ -114,10 +114,16 @@ $password = [
                             <label for="yourPassword" class="form-label">Password</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text" id="inputGroupPrepend">*</span>
-                            <?= form_password($password) ?>
-                            <div class="invalid-feedback">Please enter your password.</div>
+                                <?= form_password($password) ?>
+                                <div class="invalid-feedback">Please enter your password.</div>
                             </div>
                         </div>
+                        
+                        <!-- Tambahkan reCAPTCHA di sini -->
+                        <div class="g-recaptcha" data-sitekey="<?= config('Recaptcha')->siteKey ?>"></div>
+                        <!-- Sertakan skrip reCAPTCHA -->
+                        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
                         <div class="col-12">
                             <?= form_submit('submit', 'SignUp', ['class' => 'btn btn-success w-100']) ?>
                         </div>
@@ -126,13 +132,7 @@ $password = [
                     </div>
                 </div>
 
-                <div class="credits">
-                    <!-- All the links in the footer should remain intact. -->
-                    <!-- You can delete the links only if you purchased the pro version. -->
-                    <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                    <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-                    Designed by <a href=".">Dinul Store</a>
-                </div>
+                <?= $this->include('components/footer') ?>
 
             </div>
         </div>

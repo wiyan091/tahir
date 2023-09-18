@@ -43,6 +43,17 @@
     </div>
 <?php } ?>
 
+<?php if (session()->has('validationErrors')) : ?>
+    <div class="alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center border rounded-0" role="alert">
+        <ul class="text-danger">
+            <?php foreach (session('validationErrors') as $error) : ?>
+                <?= esc($error) ?>
+            <?php endforeach ?>
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+    </div>
+<?php endif ?>
+
 <div class="container-fluid">
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">TABEL</h1>
